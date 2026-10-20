@@ -253,17 +253,27 @@ body {
         <textarea id="noteBody" placeholder="Write something..." style="width:100%;height:300px;border:none;font-size:16px;outline:none;resize:none;"></textarea>
       </div>
     </div>
+
+    <!-- 照片页 -->
     <div class="page" id="photos">
       <div class="page-header">
         <span class="back" onclick="goHome()">‹</span>
         <span>Photos</span>
       </div>
-      <div class="content" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px;">
-        <img src="Photo 2.jpg" style="width:100%;border-radius:8px;">
-        <img src="Photo 3.jpg" style="width:100%;border-radius:8px;">
-        <img src="Photo 4.jpg" style="width:100%;border-radius:8px;">
-        <img src="Photo 5.jpg" style="width:100%;border-radius:8px;">
+      <div style="display:flex;border-bottom:1px solid #eee;">
+        <div id="tabPhotos" onclick="switchPhotoTab('photos')" style="flex:1;text-align:center;padding:12px;font-weight:600;color:#007aff;border-bottom:2px solid #007aff;cursor:pointer;">Photos</div>
+        <div id="tabVideos" onclick="switchPhotoTab('videos')" style="flex:1;text-align:center;padding:12px;color:#666;cursor:pointer;">Videos</div>
       </div>
+      <div id="photosContent" style="flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:2px;"></div>
+    </div>
+
+    <!-- 大图 / 视频查看页 -->
+    <div class="page" id="photoView">
+      <div class="page-header">
+        <span class="back" onclick="openApp('photos')">‹</span>
+        <span id="photoViewTitle">Photo</span>
+      </div>
+      <div class="content" id="photoViewContent" style="display:flex;align-items:center;justify-content:center;background:#000;padding:0;"></div>
     </div>
   </div>
 </div>
@@ -284,6 +294,27 @@ const avatars = {
   "Martin": "Photo 11.jpg",
   "Kai": "Photo 12.jpg"
 };
+
+// ========== 照片和视频 ==========
+const photosData = [
+  "Photo 2.jpg",
+  "Photo 3.jpg",
+  "Photo 4.jpg",
+  "Photo 5.jpg",
+  "Photo 6.jpg",
+];
+
+const videosData = [
+  "video 1.mp4",
+  "video 2.mp4",
+  "video 3.mp4",
+  "video 4.mp4",
+  "video 5.mp4",
+  "video 6.mp4",
+  "video 7.mp4",
+];
+
+let currentPhotoTab = "photos";
 
 let chats = JSON.parse(sessionStorage.getItem("chats")) || {
   "Mase": [
@@ -415,6 +446,7 @@ function openApp(name) {
   if (name === "chatList") renderChatList();
   if (name === "chat") renderChat();
   if (name === "notes") renderNotes();
+  if (name === "photos") renderPhotos();
 }
 
 function goHome() {
@@ -536,6 +568,56 @@ function saveNote() {
   notesData.push({ title, content });
   saveNotes();
   openApp("notes");
+}
+
+// ========== 照片 / 视频功能 ==========
+function switchPhotoTab(tab) {
+  currentPhotoTab = tab;
+  document.getElementById("tabPhotos").style.color = tab === "photos" ? "#007aff" : "#666";
+  document.getElementById("tabPhotos").style.borderBottom = tab === "photos" ? "2px solid #007aff" : "none";
+  document.getElementById("tabPhotos").style.fontWeight = tab === "photos" ? "600" : "normal";
+  document.getElementById("tabVideos").style.color = tab === "videos" ? "#007aff" : "#666";
+  document.getElementById("tabVideos").style.borderBottom = tab === "videos" ? "2px solid #007aff" : "none";
+  document.getElementById("tabVideos").style.fontWeight = tab === "videos" ? "600" : "normal";
+  renderPhotos();
+}
+
+function renderPhotos() {
+  const box = document.getElementById("photosContent");
+  const list = currentPhotoTab === "photos" ? photosData : videosData;
+  if (list.length === 0) {
+    box.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#999;padding:40px;">No ${currentPhotoTab}</div>`;
+    return;
+  }
+  const cellSize = Math.floor((box.clientWidth - 10) / 4);
+  box.innerHTML = list.map(src => {
+    if (currentPhotoTab === "videos") {
+      return `<div onclick="viewMedia('${src}','video')" style="width:${cellSize}px;height:${cellSize}px;overflow:hidden;background:#000;position:relative;flex-shrink:0;">
+        <video src="${src}" muted preload="metadata" style="width:100%;height:100%;object-fit:cover;"></video>
+        <div style="position:absolute;bottom:4px;right:4px;color:#fff;font-size:11px;background:rgba(0,0,0,.5);padding:2px 5px;border-radius:4px;">▶</div>
+      </div>`;
+    }
+    return `<div onclick="viewMedia('${src}','photo')" style="width:${cellSize}px;height:${cellSize}px;overflow:hidden;background:#eee;flex-shrink:0;">
+      <img src="${src}" style="width:100%;height:100%;object-fit:cover;">
+    </div>`;
+  }).join("");
+  box.style.display = "flex";
+  box.style.flexWrap = "wrap";
+  box.style.gap = "2px";
+  box.style.padding = "2px";
+  box.style.alignContent = "flex-start";
+}
+
+function viewMedia(src, type) {
+  const box = document.getElementById("photoViewContent");
+  if (type === "video") {
+    box.innerHTML = `<video src="${src}" controls autoplay style="max-width:100%;max-height:100%;"></video>`;
+    document.getElementById("photoViewTitle").textContent = "Video";
+  } else {
+    box.innerHTML = `<img src="${src}" style="max-width:100%;max-height:100%;object-fit:contain;">`;
+    document.getElementById("photoViewTitle").textContent = "Photo";
+  }
+  openApp("photoView");
 }
 </script>
 </body>
