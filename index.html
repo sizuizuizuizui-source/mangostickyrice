@@ -125,7 +125,6 @@ body {
 .notification .title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
 .notification .text { font-size: 14px; color: #333; }
 
-/* 通用页面 */
 .page {
   position: absolute; inset: 0; background: #fff; display: none; flex-direction: column; z-index: 50;
 }
@@ -135,6 +134,28 @@ body {
 }
 .back { font-size: 24px; cursor: pointer; color: #007aff; }
 .content { flex: 1; overflow-y: auto; padding: 12px; }
+
+.input-bar {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px 16px;
+  background: #f0f0f0;
+  gap: 8px;
+}
+.plus-btn {
+  width: 36px; height: 36px; border-radius: 50%; background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: #666; cursor: pointer; flex-shrink: 0;
+}
+#msgInput {
+  flex: 1; height: 36px; border: none; border-radius: 18px;
+  padding: 0 14px; font-size: 15px; outline: none; background: #fff;
+}
+.send-btn {
+  width: 36px; height: 36px; border-radius: 50%; background: #25D366;
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; cursor: pointer; flex-shrink: 0;
+}
 
 .msg { display: flex; margin: 8px 0; }
 .msg.me { justify-content: flex-end; }
@@ -157,11 +178,10 @@ body {
     <span>100%</span>
   </div>
 
-  <div id="screen">
-    <!-- 消息弹窗 -->
-    <div class="notification" id="notification">
+<div id="screen">
+    <div class="notification" id="notification" onclick="openChatFromNoti()">
       <div class="title">WhatsApp</div>
-      <div class="text">Mase: Half an hour late maybe. For training.</div>
+      <div class="text" id="notiText">Mase: Half an hour late maybe. For training.</div>
     </div>
 
     <!-- 锁屏 -->
@@ -192,8 +212,8 @@ body {
         <div class="key" onclick="deleteKey()">⌫</div>
       </div>
       <div class="pin-bottom">
-        <span onclick="cancelPin()">取消</span>
-        <span>紧急</span>
+        <span onclick="cancelPin()">Cancel</span>
+        <span>Emergency</span>
       </div>
     </div>
 
@@ -218,7 +238,7 @@ body {
         </div>
       </div>
       <div class="dock">
-        <div class="app" onclick="openApp('chat')">
+        <div class="app" onclick="openApp('chatList')">
           <div class="icon" style="background:#25D366">💬</div>
         </div>
         <div class="app">
@@ -246,6 +266,11 @@ body {
         <span id="chatTitle">聊天</span>
       </div>
       <div class="content" id="chatContent"></div>
+      <div class="input-bar">
+        <div class="plus-btn">+</div>
+        <input type="text" placeholder="Message" id="msgInput">
+        <div class="send-btn">➤</div>
+      </div>
     </div>
 
     <!-- 备忘录页 -->
@@ -278,6 +303,11 @@ body {
 // ========== 在这里改密码 ==========
 const CORRECT_PIN = "1014";
 
+// ========== 通知设置 ==========
+const notiChat = "Mase";                          // 通知对应的聊天对象
+const notiNewMsg = { type: "them", text: "Half an hour late maybe. For training." };  // 点击进入后才出现的新消息
+let notiAdded = false;
+
 // ========== 所有聊天记录在这里改 ==========
 const chats = {
   "Mase": [
@@ -292,7 +322,6 @@ const chats = {
     { type: "them", text: "DEFINITELY FIVE GUYS!!!" },
     { type: "me", text: "Ok, 7pm?" },
     { type: "them", text: "Perfect 👍" },
-    { type: "them", text: "Half an hour late maybe. For training." },
   ],
   "Mikel": [
     { type: "date", text: "October 19" },
@@ -380,15 +409,13 @@ function checkPin() {
     document.getElementById("pin").style.display = "none";
     document.getElementById("home").style.display = "block";
 
-    // 解锁 5 秒后弹出消息
+    // 解锁 1 秒后弹出通知
     setTimeout(() => {
+      document.getElementById("notiText").textContent = notiChat + ": " + notiNewMsg.text;
       const noti = document.getElementById("notification");
       noti.style.display = "block";
-      // 5 秒后自动消失
-      setTimeout(() => {
-        noti.style.display = "none";
-      }, 5000);
-    }, 5000);
+      setTimeout(() => { noti.style.display = "none"; }, 5000);
+    }, 1000);
   } else {
     const dots = document.getElementById("dots");
     dots.classList.add("shake");
@@ -404,6 +431,12 @@ function cancelPin() {
   document.getElementById("pin").style.display = "none";
   document.getElementById("lock").style.display = "flex";
   currentPin = "";
+}
+
+// 点击通知跳转
+function openChatFromNoti() {
+  document.getElementById("notification").style.display = "none";
+  openChat(notiChat);
 }
 
 function openApp(name) {
@@ -441,6 +474,13 @@ function renderChatList() {
 function openChat(name) {
   currentChat = name;
   document.getElementById("chatTitle").textContent = name;
+
+  // 进入通知对应的聊天时，才追加新消息（只追加一次）
+  if (name === notiChat && !notiAdded) {
+    chats[name].push(notiNewMsg);
+    notiAdded = true;
+  }
+
   openApp("chat");
 }
 
@@ -453,6 +493,27 @@ function renderChat() {
   }).join("");
   box.scrollTop = box.scrollHeight;
 }
+
+function sendMessage(text) {
+  if (!currentChat || !text) return;
+  chats[currentChat].push({ type: "me", text: text });
+  renderChat();
+}
+
+document.getElementById("msgInput").addEventListener("keydown", function(e) {
+  if (e.key === "Enter" && this.value.trim()) {
+    sendMessage(this.value.trim());
+    this.value = "";
+  }
+});
+
+document.querySelector(".send-btn").onclick = function() {
+  const input = document.getElementById("msgInput");
+  if (input.value.trim()) {
+    sendMessage(input.value.trim());
+    input.value = "";
+  }
+};
 
 function renderNotes() {
   const box = document.getElementById("notesContent");
