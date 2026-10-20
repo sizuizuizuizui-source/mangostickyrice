@@ -272,10 +272,20 @@ body {
 const CORRECT_PIN = "1014";
 const notiChat = "Mase";
 const notiNewMsg = { type: "them", text: "Half an hour late maybe. For training." };
-let notiAdded = localStorage.getItem("notiAdded") === "true";
-let notiShown = localStorage.getItem("notiShown") === "true";
+let notiAdded = sessionStorage.getItem("notiAdded") === "true";
+let notiShown = sessionStorage.getItem("notiShown") === "true";
 
-let chats = JSON.parse(localStorage.getItem("chats")) || {
+const avatars = {
+  "Mase": "Photo 6.jpg",
+  "Mikel": "Photo 7.jpg",
+  "Mom": "Photo 8.jpg",
+  "WE GUNNERS ARE UNBEATABLE": "Photo 9.jpg",
+  "Ben": "Photo 10.jpg",
+  "Martin": "Photo 11.jpg",
+  "Kai": "Photo 12.jpg"
+};
+
+let chats = JSON.parse(sessionStorage.getItem("chats")) || {
   "Mase": [
     { type: "date", text: "October 19" },
     { type: "them", text: "Miss u so much..." },
@@ -306,23 +316,23 @@ let chats = JSON.parse(localStorage.getItem("chats")) || {
   ],
   "WE GUNNERS ARE UNBEATABLE": [
     { type: "date", text: "October 19" },
-    { type: "them", text: "uh oh our declan is setting off to Manchetser." },
-    { type: "them", text: "shut the fuck up Benjamin." },
-    { type: "them", text: "uh oh poor Benjamin." },
-    { type: "them", text: "Martin🙁." },
+    { type: "them", sender: "Ben", text: "uh oh our declan is setting off to Manchetser." },
+    { type: "them", sender: "Martin", text: "shut the fuck up Benjamin William White." },
+    { type: "them", sender: "Kai", text: "uh oh poor Benjamin." },
+    { type: "them", sender: "Ben", text: "Martin🙁." },
     { type: "me", text: "You deserve that, Benjamin. ANOTHER SIDE OF CAPTAIN." },
-    { type: "them", text: "shut the fuck up declan. get your dick to Manchester asap🙂" },
+    { type: "them", sender: "Ben", text: "shut the fuck up declan. get your dick to Manchester asap🙂" },
   ]
 };
 
-let notesData = JSON.parse(localStorage.getItem("notesData")) || [
+let notesData = JSON.parse(sessionStorage.getItem("notesData")) || [
   { title: "Shopping Lists", content: "Haribo\nCondom\nRoses (Red ones)\nTeddy Bears" },
   { title: "Thinking", content: "Proposal in three days" },
   { title: "To-do", content: "Book a restaurant" },
 ];
 
-function saveChats() { localStorage.setItem("chats", JSON.stringify(chats)); }
-function saveNotes() { localStorage.setItem("notesData", JSON.stringify(notesData)); }
+function saveChats() { sessionStorage.setItem("chats", JSON.stringify(chats)); }
+function saveNotes() { sessionStorage.setItem("notesData", JSON.stringify(notesData)); }
 
 let currentPin = "";
 let currentChat = "";
@@ -417,9 +427,10 @@ function renderChatList() {
   box.innerHTML = Object.keys(chats).map(name => {
     const msgs = chats[name].filter(m => m.type !== "date");
     const last = msgs[msgs.length - 1];
+    const avatar = avatars[name] || "";
     return `
       <div onclick="openChat('${name}')" style="display:flex;align-items:center;padding:14px 12px;border-bottom:1px solid #eee;cursor:pointer;">
-        <div style="width:48px;height:48px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;margin-right:12px;flex-shrink:0;">${name[0]}</div>
+        <img src="${avatar}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-right:12px;flex-shrink:0;">
         <div style="flex:1;min-width:0;">
           <div style="font-weight:600;font-size:16px;">${name}</div>
           <div style="font-size:14px;color:#666;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${last ? last.text : ""}</div>
@@ -435,7 +446,7 @@ function openChat(name) {
   if (name === notiChat && !notiAdded) {
     chats[name].push(notiNewMsg);
     notiAdded = true;
-    localStorage.setItem("notiAdded", "true");
+    sessionStorage.setItem("notiAdded", "true");
     saveChats();
   }
   openApp("chat");
@@ -444,9 +455,35 @@ function openChat(name) {
 function renderChat() {
   const box = document.getElementById("chatContent");
   const data = chats[currentChat] || [];
+  const isGroup = currentChat === "WE GUNNERS ARE UNBEATABLE";
+  const avatar = avatars[currentChat] || "";
+
   box.innerHTML = data.map(m => {
     if (m.type === "date") return `<div class="date-sep">${m.text}</div>`;
-    return `<div class="msg ${m.type}"><div class="bubble">${m.text}</div></div>`;
+
+    if (m.type === "me") {
+      return `<div class="msg me"><div class="bubble">${m.text}</div></div>`;
+    }
+
+    if (isGroup && m.sender) {
+      const senderAvatar = avatars[m.sender] || avatar;
+      return `
+        <div class="msg them" style="align-items:flex-start;">
+          <img src="${senderAvatar}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;margin-right:8px;margin-top:4px;">
+          <div>
+            <div style="font-size:12px;color:#666;margin-bottom:2px;">${m.sender}</div>
+            <div class="bubble">${m.text}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="msg them" style="align-items:flex-start;">
+        <img src="${avatar}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;margin-right:8px;margin-top:4px;">
+        <div class="bubble">${m.text}</div>
+      </div>
+    `;
   }).join("");
   box.scrollTop = box.scrollHeight;
 }
@@ -456,7 +493,7 @@ function sendMessage(text) {
   chats[currentChat].push({ type: "me", text: text });
   saveChats();
   if (currentChat === notiChat) {
-    localStorage.setItem("notiShown", "true");
+    sessionStorage.setItem("notiShown", "true");
     notiShown = true;
   }
   renderChat();
