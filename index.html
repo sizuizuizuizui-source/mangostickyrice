@@ -33,8 +33,6 @@ body {
   position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
   width: 126px; height: 36px; background: #000; border-radius: 20px; z-index: 200;
 }
-
-/* 锁屏 */
 #lock {
   position: absolute; inset: 0;
   background: linear-gradient(180deg, #2c3e50, #1a252f);
@@ -45,8 +43,6 @@ body {
 .lock-date { font-size: 22px; margin-top: 8px; opacity: .9; }
 .lock-hint { position: absolute; bottom: 50px; font-size: 16px; opacity: .7; animation: bounce 2s infinite; }
 @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-
-/* 密码页 */
 #pin {
   position: absolute; inset: 0;
   background: linear-gradient(180deg, #2c3e50, #1a252f);
@@ -63,9 +59,7 @@ body {
   50% { transform: translateX(12px); }
   75% { transform: translateX(-8px); }
 }
-.keypad {
-  display: grid; grid-template-columns: repeat(3, 80px); gap: 18px 28px;
-}
+.keypad { display: grid; grid-template-columns: repeat(3, 80px); gap: 18px 28px; }
 .key {
   width: 80px; height: 80px; border-radius: 50%;
   background: rgba(255,255,255,.15);
@@ -78,11 +72,8 @@ body {
   display: flex; justify-content: space-between; padding: 0 50px; font-size: 16px;
 }
 .pin-bottom span { cursor: pointer; }
-
-/* 主屏幕（壁纸在这里改） */
 #home {
   position: absolute; inset: 0;
-  /* ↓↓↓ 壁纸在这里改 ↓↓↓ */
   background: url('Photo 1.jpg') center/cover;
   display: none;
 }
@@ -102,21 +93,11 @@ body {
   background: rgba(255,255,255,.2); backdrop-filter: blur(20px);
   border-radius: 32px; display: flex; justify-content: space-around; align-items: center;
 }
-
-/* 消息弹窗 */
 .notification {
-  position: absolute;
-  top: 60px;
-  left: 16px;
-  right: 16px;
-  background: rgba(255,255,255,.92);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  padding: 14px 16px;
-  display: none;
-  z-index: 300;
-  box-shadow: 0 4px 20px rgba(0,0,0,.25);
-  animation: slideDown .4s ease;
+  position: absolute; top: 60px; left: 16px; right: 16px;
+  background: rgba(255,255,255,.92); backdrop-filter: blur(20px);
+  border-radius: 16px; padding: 14px 16px; display: none; z-index: 300;
+  box-shadow: 0 4px 20px rgba(0,0,0,.25); animation: slideDown .4s ease; cursor: pointer;
 }
 @keyframes slideDown {
   from { transform: translateY(-20px); opacity: 0; }
@@ -124,7 +105,6 @@ body {
 }
 .notification .title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
 .notification .text { font-size: 14px; color: #333; }
-
 .page {
   position: absolute; inset: 0; background: #fff; display: none; flex-direction: column; z-index: 50;
 }
@@ -134,13 +114,9 @@ body {
 }
 .back { font-size: 24px; cursor: pointer; color: #007aff; }
 .content { flex: 1; overflow-y: auto; padding: 12px; }
-
 .input-bar {
-  display: flex;
-  align-items: center;
-  padding: 8px 10px 16px;
-  background: #f0f0f0;
-  gap: 8px;
+  display: flex; align-items: center; padding: 8px 10px 16px;
+  background: #f0f0f0; gap: 8px;
 }
 .plus-btn {
   width: 36px; height: 36px; border-radius: 50%; background: #fff;
@@ -156,42 +132,34 @@ body {
   color: #fff; display: flex; align-items: center; justify-content: center;
   font-size: 16px; cursor: pointer; flex-shrink: 0;
 }
-
 .msg { display: flex; margin: 8px 0; }
 .msg.me { justify-content: flex-end; }
 .bubble { max-width: 70%; padding: 10px 14px; border-radius: 18px; font-size: 16px; line-height: 1.4; }
 .msg.them .bubble { background: #e9e9eb; color: #000; border-bottom-left-radius: 4px; }
 .msg.me .bubble { background: #25D366; color: #fff; border-bottom-right-radius: 4px; }
 .date-sep { text-align: center; color: #8e8e93; font-size: 13px; margin: 16px 0; }
-
 .note { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
 .note h3 { margin-bottom: 6px; }
 .note p { color: #666; font-size: 15px; }
 </style>
 </head>
 <body>
-
 <div id="phone">
   <div class="island"></div>
   <div class="status-bar">
     <span id="time">15:24</span>
     <span>100%</span>
   </div>
-
-<div id="screen">
+  <div id="screen">
     <div class="notification" id="notification" onclick="openChatFromNoti()">
       <div class="title">WhatsApp</div>
       <div class="text" id="notiText">Mase: Half an hour late maybe. For training.</div>
     </div>
-
-    <!-- 锁屏 -->
     <div id="lock">
       <div class="lock-time" id="lockTime">15:24</div>
       <div class="lock-date">October 20th Tuesday</div>
       <div class="lock-hint">click to unlock the phone</div>
     </div>
-
-    <!-- 密码页 -->
     <div id="pin">
       <div class="pin-title">Passwords</div>
       <div class="dots" id="dots">
@@ -216,9 +184,7 @@ body {
         <span>Emergency</span>
       </div>
     </div>
-
-    <!-- 主屏幕 -->
-<div id="home">
+    <div id="home">
       <div class="apps">
         <div class="app" onclick="openApp('chatList')">
           <div class="icon" style="background:#25D366">💬</div>
@@ -249,8 +215,6 @@ body {
         </div>
       </div>
     </div>
-
-<!-- 聊天列表页 -->
     <div class="page" id="chatList">
       <div class="page-header">
         <span class="back" onclick="goHome()">‹</span>
@@ -258,8 +222,6 @@ body {
       </div>
       <div class="content" id="chatListContent"></div>
     </div>
-
-    <!-- 单个聊天页 -->
     <div class="page" id="chat">
       <div class="page-header">
         <span class="back" onclick="openApp('chatList')">‹</span>
@@ -272,24 +234,31 @@ body {
         <div class="send-btn">➤</div>
       </div>
     </div>
-
-    <!-- 备忘录页 -->
     <div class="page" id="notes">
       <div class="page-header">
         <span class="back" onclick="goHome()">‹</span>
         <span>Notes</span>
+        <span style="margin-left:auto;color:#007aff;cursor:pointer;font-size:28px;" onclick="newNote()">+</span>
       </div>
       <div class="content" id="notesContent"></div>
     </div>
-
-    <!-- 照片页（相册照片在这里改） -->
+    <div class="page" id="noteEdit">
+      <div class="page-header">
+        <span class="back" onclick="openApp('notes')">‹</span>
+        <span>New Note</span>
+        <span style="margin-left:auto;color:#007aff;cursor:pointer;" onclick="saveNote()">Done</span>
+      </div>
+      <div class="content" style="padding:16px;">
+        <input id="noteTitle" placeholder="Title" style="width:100%;border:none;font-size:20px;font-weight:600;outline:none;margin-bottom:12px;">
+        <textarea id="noteBody" placeholder="Write something..." style="width:100%;height:300px;border:none;font-size:16px;outline:none;resize:none;"></textarea>
+      </div>
+    </div>
     <div class="page" id="photos">
       <div class="page-header">
         <span class="back" onclick="goHome()">‹</span>
         <span>Photos</span>
       </div>
       <div class="content" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px;">
-        <!-- ↓↓↓ 相册照片在这里改 ↓↓↓ -->
         <img src="Photo 2.jpg" style="width:100%;border-radius:8px;">
         <img src="Photo 3.jpg" style="width:100%;border-radius:8px;">
         <img src="Photo 4.jpg" style="width:100%;border-radius:8px;">
@@ -300,16 +269,13 @@ body {
 </div>
 
 <script>
-// ========== 在这里改密码 ==========
 const CORRECT_PIN = "1014";
+const notiChat = "Mase";
+const notiNewMsg = { type: "them", text: "Half an hour late maybe. For training." };
+let notiAdded = localStorage.getItem("notiAdded") === "true";
+let notiShown = localStorage.getItem("notiShown") === "true";
 
-// ========== 通知设置 ==========
-const notiChat = "Mase";                          // 通知对应的聊天对象
-const notiNewMsg = { type: "them", text: "Half an hour late maybe. For training." };  // 点击进入后才出现的新消息
-let notiAdded = false;
-
-// ========== 所有聊天记录在这里改 ==========
-const chats = {
+let chats = JSON.parse(localStorage.getItem("chats")) || {
   "Mase": [
     { type: "date", text: "October 19" },
     { type: "them", text: "Miss u so much..." },
@@ -349,14 +315,15 @@ const chats = {
   ]
 };
 
-// ========== 备忘录在这里改 ==========
-const notesData = [
+let notesData = JSON.parse(localStorage.getItem("notesData")) || [
   { title: "Shopping Lists", content: "Haribo\nCondom\nRoses (Red ones)\nTeddy Bears" },
   { title: "Thinking", content: "Proposal in three days" },
   { title: "To-do", content: "Book a restaurant" },
 ];
 
-// ========== 逻辑 ==========
+function saveChats() { localStorage.setItem("chats", JSON.stringify(chats)); }
+function saveNotes() { localStorage.setItem("notesData", JSON.stringify(notesData)); }
+
 let currentPin = "";
 let currentChat = "";
 
@@ -369,14 +336,12 @@ function updateTime() {
 setInterval(updateTime, 1000);
 updateTime();
 
-// 解锁
 function unlock() {
   document.getElementById("lock").style.display = "none";
   document.getElementById("pin").style.display = "flex";
   currentPin = "";
   updateDots();
 }
-
 document.getElementById("lock").addEventListener("click", unlock);
 document.getElementById("lock").addEventListener("touchend", function(e) {
   e.preventDefault();
@@ -387,19 +352,14 @@ function pressKey(num) {
   if (currentPin.length >= 4) return;
   currentPin += num;
   updateDots();
-  if (currentPin.length === 4) {
-    setTimeout(checkPin, 150);
-  }
+  if (currentPin.length === 4) setTimeout(checkPin, 150);
 }
-
 function deleteKey() {
   currentPin = currentPin.slice(0, -1);
   updateDots();
 }
-
 function updateDots() {
-  const dots = document.querySelectorAll(".dot");
-  dots.forEach((dot, i) => {
+  document.querySelectorAll(".dot").forEach((dot, i) => {
     dot.classList.toggle("filled", i < currentPin.length);
   });
 }
@@ -408,14 +368,14 @@ function checkPin() {
   if (currentPin === CORRECT_PIN) {
     document.getElementById("pin").style.display = "none";
     document.getElementById("home").style.display = "block";
-
-    // 解锁 1 秒后弹出通知
-    setTimeout(() => {
-      document.getElementById("notiText").textContent = notiChat + ": " + notiNewMsg.text;
-      const noti = document.getElementById("notification");
-      noti.style.display = "block";
-      setTimeout(() => { noti.style.display = "none"; }, 5000);
-    }, 1000);
+    if (!notiShown) {
+      setTimeout(() => {
+        document.getElementById("notiText").textContent = notiChat + ": " + notiNewMsg.text;
+        const noti = document.getElementById("notification");
+        noti.style.display = "block";
+        setTimeout(() => { noti.style.display = "none"; }, 5000);
+      }, 1000);
+    }
   } else {
     const dots = document.getElementById("dots");
     dots.classList.add("shake");
@@ -433,7 +393,6 @@ function cancelPin() {
   currentPin = "";
 }
 
-// 点击通知跳转
 function openChatFromNoti() {
   document.getElementById("notification").style.display = "none";
   openChat(notiChat);
@@ -443,7 +402,6 @@ function openApp(name) {
   document.getElementById("home").style.display = "none";
   document.querySelectorAll(".page").forEach(p => p.style.display = "none");
   document.getElementById(name).style.display = "flex";
-
   if (name === "chatList") renderChatList();
   if (name === "chat") renderChat();
   if (name === "notes") renderNotes();
@@ -474,13 +432,12 @@ function renderChatList() {
 function openChat(name) {
   currentChat = name;
   document.getElementById("chatTitle").textContent = name;
-
-  // 进入通知对应的聊天时，才追加新消息（只追加一次）
   if (name === notiChat && !notiAdded) {
     chats[name].push(notiNewMsg);
     notiAdded = true;
+    localStorage.setItem("notiAdded", "true");
+    saveChats();
   }
-
   openApp("chat");
 }
 
@@ -497,6 +454,11 @@ function renderChat() {
 function sendMessage(text) {
   if (!currentChat || !text) return;
   chats[currentChat].push({ type: "me", text: text });
+  saveChats();
+  if (currentChat === notiChat) {
+    localStorage.setItem("notiShown", "true");
+    notiShown = true;
+  }
   renderChat();
 }
 
@@ -506,7 +468,6 @@ document.getElementById("msgInput").addEventListener("keydown", function(e) {
     this.value = "";
   }
 });
-
 document.querySelector(".send-btn").onclick = function() {
   const input = document.getElementById("msgInput");
   if (input.value.trim()) {
@@ -520,6 +481,24 @@ function renderNotes() {
   box.innerHTML = notesData.map(n => `
     <div class="note"><h3>${n.title}</h3><p style="white-space:pre-wrap">${n.content}</p></div>
   `).join("");
+}
+
+function newNote() {
+  document.getElementById("noteTitle").value = "";
+  document.getElementById("noteBody").value = "";
+  openApp("noteEdit");
+}
+
+function saveNote() {
+  const title = document.getElementById("noteTitle").value.trim() || "Untitled";
+  const content = document.getElementById("noteBody").value.trim();
+  if (!content && title === "Untitled") {
+    openApp("notes");
+    return;
+  }
+  notesData.push({ title, content });
+  saveNotes();
+  openApp("notes");
 }
 </script>
 </body>
