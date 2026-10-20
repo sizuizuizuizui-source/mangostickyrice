@@ -198,9 +198,9 @@ body {
     </div>
 
     <!-- 主屏幕 -->
-    <div id="home">
+<div id="home">
       <div class="apps">
-        <div class="app" onclick="openApp('chat')">
+        <div class="app" onclick="openApp('chatList')">
           <div class="icon" style="background:#25D366">💬</div>
           <span>WhatsApp</span>
         </div>
@@ -230,11 +230,20 @@ body {
       </div>
     </div>
 
-    <!-- 聊天页 -->
-    <div class="page" id="chat">
+<!-- 聊天列表页 -->
+    <div class="page" id="chatList">
       <div class="page-header">
         <span class="back" onclick="goHome()">‹</span>
-        <span>Mase</span>
+        <span>WhatsApp</span>
+      </div>
+      <div class="content" id="chatListContent"></div>
+    </div>
+
+    <!-- 单个聊天页 -->
+    <div class="page" id="chat">
+      <div class="page-header">
+        <span class="back" onclick="openApp('chatList')">‹</span>
+        <span id="chatTitle">聊天</span>
       </div>
       <div class="content" id="chatContent"></div>
     </div>
@@ -269,21 +278,47 @@ body {
 // ========== 在这里改密码 ==========
 const CORRECT_PIN = "1014";
 
-// ========== 聊天记录在这里改 ==========
-const chatData = [
-  { type: "date", text: "October 19" },
-  { type: "them", text: "Miss u so much..." },
-  { type: "me", text: "On my way to Manchester" },
-  { type: "date", text: "October 20" },
-  { type: "them", text: "Hey, are you free tonight?" },
-  { type: "me", text: "Yeah, babe?" },
-  { type: "them", text: "Want to grab dinner?" },
-  { type: "me", text: "Sure, where?" },
-  { type: "them", text: "DEFINITELY FIVE GUYS!!!" },
-  { type: "me", text: "Ok, 7pm?" },
-  { type: "them", text: "Perfect 👍" },
-  { type: "them", text: "Half an hour late maybe. For training." },
-];
+// ========== 所有聊天记录在这里改 ==========
+const chats = {
+  "Mase": [
+    { type: "date", text: "October 19" },
+    { type: "them", text: "Miss u so much..." },
+    { type: "me", text: "On my way to Manchester" },
+    { type: "date", text: "October 20" },
+    { type: "them", text: "Hey, are you free tonight?" },
+    { type: "me", text: "Yeah, babe?" },
+    { type: "them", text: "Want to grab dinner?" },
+    { type: "me", text: "Sure, where?" },
+    { type: "them", text: "DEFINITELY FIVE GUYS!!!" },
+    { type: "me", text: "Ok, 7pm?" },
+    { type: "them", text: "Perfect 👍" },
+    { type: "them", text: "Half an hour late maybe. For training." },
+  ],
+  "Mikel": [
+    { type: "date", text: "October 19" },
+    { type: "them", text: "How many days will you leave?" },
+    { type: "me", text: "Two days." },
+    { type: "me", text: "Please... Mase needs me." },
+    { type: "them", text: "🙄Can't imagine that I'm gonna admit my key player to look after a Man United Player." },
+    { type: "me", text: "🙁" },
+  ],
+  "Mom": [
+    { type: "date", text: "October 18" },
+    { type: "them", text: "Gonna visit Manchester from London lol?" },
+    { type: "me", text: "Yes Mom..." },
+    { type: "them", text: "I've made chocolate cookies. Bring some to Mase?" },
+    { type: "me", text: "OK. Mase will definitely excited for that 😂" },
+  ],
+  "WE GUNNERS ARE UNBEATABLE": [
+    { type: "date", text: "October 19" },
+    { type: "them", text: "uh oh our declan is setting off to Manchetser." },
+    { type: "them", text: "shut the fuck up Benjamin." },
+    { type: "them", text: "uh oh poor Benjamin." },
+    { type: "them", text: "Martin🙁." },
+    { type: "me", text: "You deserve that, Benjamin. ANOTHER SIDE OF CAPTAIN." },
+    { type: "them", text: "shut the fuck up declan. get your dick to Manchester asap🙂" },
+  ]
+};
 
 // ========== 备忘录在这里改 ==========
 const notesData = [
@@ -294,6 +329,7 @@ const notesData = [
 
 // ========== 逻辑 ==========
 let currentPin = "";
+let currentChat = "";
 
 function updateTime() {
   const now = new Date();
@@ -374,6 +410,8 @@ function openApp(name) {
   document.getElementById("home").style.display = "none";
   document.querySelectorAll(".page").forEach(p => p.style.display = "none");
   document.getElementById(name).style.display = "flex";
+
+  if (name === "chatList") renderChatList();
   if (name === "chat") renderChat();
   if (name === "notes") renderNotes();
 }
@@ -383,9 +421,33 @@ function goHome() {
   document.getElementById("home").style.display = "block";
 }
 
+function renderChatList() {
+  const box = document.getElementById("chatListContent");
+  box.innerHTML = Object.keys(chats).map(name => {
+    const msgs = chats[name].filter(m => m.type !== "date");
+    const last = msgs[msgs.length - 1];
+    return `
+      <div onclick="openChat('${name}')" style="display:flex;align-items:center;padding:14px 12px;border-bottom:1px solid #eee;cursor:pointer;">
+        <div style="width:48px;height:48px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;margin-right:12px;flex-shrink:0;">${name[0]}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:600;font-size:16px;">${name}</div>
+          <div style="font-size:14px;color:#666;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${last ? last.text : ""}</div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function openChat(name) {
+  currentChat = name;
+  document.getElementById("chatTitle").textContent = name;
+  openApp("chat");
+}
+
 function renderChat() {
   const box = document.getElementById("chatContent");
-  box.innerHTML = chatData.map(m => {
+  const data = chats[currentChat] || [];
+  box.innerHTML = data.map(m => {
     if (m.type === "date") return `<div class="date-sep">${m.text}</div>`;
     return `<div class="msg ${m.type}"><div class="bubble">${m.text}</div></div>`;
   }).join("");
