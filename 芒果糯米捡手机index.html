@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Declan Rice's iPhone 18 Pro Max</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body {
+  background: #1a1a1a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+}
+#phone {
+  width: 390px;
+  height: 844px;
+  background: #000;
+  border-radius: 50px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 0 12px #1c1c1e, 0 20px 60px rgba(0,0,0,.6);
+}
+#screen { position: absolute; inset: 0; background: #000; overflow: hidden; }
+.status-bar {
+  position: absolute; top: 0; left: 0; right: 0; height: 54px;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 28px 0; color: #fff; font-size: 16px; font-weight: 600; z-index: 100; pointer-events: none;
+}
+.island {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  width: 126px; height: 36px; background: #000; border-radius: 20px; z-index: 200;
+}
+
+/* 锁屏 */
+#lock {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, #2c3e50, #1a252f);
+  color: #fff; display: flex; flex-direction: column; align-items: center; padding-top: 120px;
+  cursor: pointer;
+}
+.lock-time { font-size: 92px; font-weight: 200; letter-spacing: -2px; }
+.lock-date { font-size: 22px; margin-top: 8px; opacity: .9; }
+.lock-hint { position: absolute; bottom: 50px; font-size: 16px; opacity: .7; animation: bounce 2s infinite; }
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+/* 密码页 */
+#pin {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, #2c3e50, #1a252f);
+  color: #fff; display: none; flex-direction: column; align-items: center; padding-top: 140px;
+}
+.pin-title { font-size: 20px; margin-bottom: 30px; }
+.dots { display: flex; gap: 18px; margin-bottom: 50px; }
+.dot { width: 14px; height: 14px; border: 1.5px solid #fff; border-radius: 50%; }
+.dot.filled { background: #fff; }
+.dots.shake { animation: shake .4s; }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-12px); }
+  50% { transform: translateX(12px); }
+  75% { transform: translateX(-8px); }
+}
+.keypad {
+  display: grid; grid-template-columns: repeat(3, 80px); gap: 18px 28px;
+}
+.key {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; cursor: pointer; user-select: none;
+}
+.key:active { background: rgba(255,255,255,.4); }
+.pin-bottom {
+  position: absolute; bottom: 40px; width: 100%;
+  display: flex; justify-content: space-between; padding: 0 50px; font-size: 16px;
+}
+.pin-bottom span { cursor: pointer; }
+
+/* 主屏幕（壁纸在这里改） */
+#home {
+  position: absolute; inset: 0;
+  /* ↓↓↓ 壁纸在这里改 ↓↓↓ */
+  background: url('Photo 1.jpg') center/cover;
+  display: none;
+}
+.apps {
+  position: absolute; top: 70px; left: 20px; right: 20px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px 0; justify-items: center;
+}
+.app { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 70px; cursor: pointer; }
+.app .icon {
+  width: 60px; height: 60px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+.app span { color: #fff; font-size: 12px; text-shadow: 0 1px 3px rgba(0,0,0,.6); }
+.dock {
+  position: absolute; bottom: 20px; left: 16px; right: 16px; height: 90px;
+  background: rgba(255,255,255,.2); backdrop-filter: blur(20px);
+  border-radius: 32px; display: flex; justify-content: space-around; align-items: center;
+}
+
+/* 消息弹窗 */
+.notification {
+  position: absolute;
+  top: 60px;
+  left: 16px;
+  right: 16px;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: none;
+  z-index: 300;
+  box-shadow: 0 4px 20px rgba(0,0,0,.25);
+  animation: slideDown .4s ease;
+}
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.notification .title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+.notification .text { font-size: 14px; color: #333; }
+
+/* 通用页面 */
+.page {
+  position: absolute; inset: 0; background: #fff; display: none; flex-direction: column; z-index: 50;
+}
+.page-header {
+  height: 88px; padding: 50px 16px 0; display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid #eee; font-weight: 600; font-size: 17px;
+}
+.back { font-size: 24px; cursor: pointer; color: #007aff; }
+.content { flex: 1; overflow-y: auto; padding: 12px; }
+
+.msg { display: flex; margin: 8px 0; }
+.msg.me { justify-content: flex-end; }
+.bubble { max-width: 70%; padding: 10px 14px; border-radius: 18px; font-size: 16px; line-height: 1.4; }
+.msg.them .bubble { background: #e9e9eb; color: #000; border-bottom-left-radius: 4px; }
+.msg.me .bubble { background: #25D366; color: #fff; border-bottom-right-radius: 4px; }
+.date-sep { text-align: center; color: #8e8e93; font-size: 13px; margin: 16px 0; }
+
+.note { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.note h3 { margin-bottom: 6px; }
+.note p { color: #666; font-size: 15px; }
+</style>
+</head>
+<body>
+
+<div id="phone">
+  <div class="island"></div>
+  <div class="status-bar">
+    <span id="time">15:24</span>
+    <span>100%</span>
+  </div>
+
+  <div id="screen">
+    <!-- 消息弹窗 -->
+    <div class="notification" id="notification">
+      <div class="title">WhatsApp</div>
+      <div class="text">Mase: Half an hour late home maybe. For training.</div>
+    </div>
+
+    <!-- 锁屏 -->
+    <div id="lock">
+      <div class="lock-time" id="lockTime">15:24</div>
+      <div class="lock-date">October 20th Tuesday</div>
+      <div class="lock-hint">click to unlock the phone</div>
+    </div>
+
+    <!-- 密码页 -->
+    <div id="pin">
+      <div class="pin-title">Passwords</div>
+      <div class="dots" id="dots">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="keypad">
+        <div class="key" onclick="pressKey(1)">1</div>
+        <div class="key" onclick="pressKey(2)">2</div>
+        <div class="key" onclick="pressKey(3)">3</div>
+        <div class="key" onclick="pressKey(4)">4</div>
+        <div class="key" onclick="pressKey(5)">5</div>
+        <div class="key" onclick="pressKey(6)">6</div>
+        <div class="key" onclick="pressKey(7)">7</div>
+        <div class="key" onclick="pressKey(8)">8</div>
+        <div class="key" onclick="pressKey(9)">9</div>
+        <div></div>
+        <div class="key" onclick="pressKey(0)">0</div>
+        <div class="key" onclick="deleteKey()">⌫</div>
+      </div>
+      <div class="pin-bottom">
+        <span onclick="cancelPin()">取消</span>
+        <span>紧急</span>
+      </div>
+    </div>
+
+    <!-- 主屏幕 -->
+    <div id="home">
+      <div class="apps">
+        <div class="app" onclick="openApp('chat')">
+          <div class="icon" style="background:#25D366">💬</div>
+          <span>WhatsApp</span>
+        </div>
+        <div class="app" onclick="openApp('notes')">
+          <div class="icon" style="background:#ffcc00;color:#000">📝</div>
+          <span>Notes</span>
+        </div>
+        <div class="app" onclick="openApp('photos')">
+          <div class="icon" style="background:#ff2d55">🖼️</div>
+          <span>Photo</span>
+        </div>
+        <div class="app">
+          <div class="icon" style="background:#5ac8fa">📅</div>
+          <span>Calendar</span>
+        </div>
+      </div>
+      <div class="dock">
+        <div class="app" onclick="openApp('chat')">
+          <div class="icon" style="background:#25D366">💬</div>
+        </div>
+        <div class="app">
+          <div class="icon" style="background:#007aff">📞</div>
+        </div>
+        <div class="app">
+          <div class="icon" style="background:#34c759">🌐</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 聊天页 -->
+    <div class="page" id="chat">
+      <div class="page-header">
+        <span class="back" onclick="goHome()">‹</span>
+        <span>Mase</span>
+      </div>
+      <div class="content" id="chatContent"></div>
+    </div>
+
+    <!-- 备忘录页 -->
+    <div class="page" id="notes">
+      <div class="page-header">
+        <span class="back" onclick="goHome()">‹</span>
+        <span>Notes</span>
+      </div>
+      <div class="content" id="notesContent"></div>
+    </div>
+
+    <!-- 照片页（相册照片在这里改） -->
+    <div class="page" id="photos">
+      <div class="page-header">
+        <span class="back" onclick="goHome()">‹</span>
+        <span>Photos</span>
+      </div>
+      <div class="content" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px;">
+        <!-- ↓↓↓ 相册照片在这里改 ↓↓↓ -->
+        <img src="Photo 2.jpg" style="width:100%;border-radius:8px;">
+        <img src="Photo 3.jpg" style="width:100%;border-radius:8px;">
+        <img src="Photo 4.jpg" style="width:100%;border-radius:8px;">
+        <img src="Photo 5.jpg" style="width:100%;border-radius:8px;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== 在这里改密码 ==========
+const CORRECT_PIN = "1014";
+
+// ========== 聊天记录在这里改 ==========
+const chatData = [
+  { type: "date", text: "October 20" },
+  { type: "them", text: "Hey, are you free tonight?" },
+  { type: "me", text: "Yeah, babe?" },
+  { type: "them", text: "Want to grab dinner?" },
+  { type: "me", text: "Sure, where?" },
+  { type: "them", text: "DEFINITELY FIVE GUYS!!!" },
+  { type: "me", text: "Ok, 7pm?" },
+  { type: "them", text: "Perfect 👍" },
+  { type: "date", text: "October 21" },
+  { type: "them", text: "Miss u so much..." },
+  { type: "me", text: "On my way to Manchester" },
+  { type: "them", text: "Half an hour late home maybe. For training." },
+];
+
+// ========== 备忘录在这里改 ==========
+const notesData = [
+  { title: "Shopping Lists", content: "Haribo\nCondom\nRoses (Red ones)\nTeddy Bears" },
+  { title: "Thinking", content: "Proposal in three days" },
+  { title: "To-do", content: "Book a restaurant" },
+];
+
+// ========== 逻辑 ==========
+let currentPin = "";
+
+function updateTime() {
+  const now = new Date();
+  const t = now.getHours().toString().padStart(2,"0") + ":" + now.getMinutes().toString().padStart(2,"0");
+  document.getElementById("time").textContent = t;
+  document.getElementById("lockTime").textContent = t;
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+// 解锁
+function unlock() {
+  document.getElementById("lock").style.display = "none";
+  document.getElementById("pin").style.display = "flex";
+  currentPin = "";
+  updateDots();
+}
+
+document.getElementById("lock").addEventListener("click", unlock);
+document.getElementById("lock").addEventListener("touchend", function(e) {
+  e.preventDefault();
+  unlock();
+});
+
+function pressKey(num) {
+  if (currentPin.length >= 4) return;
+  currentPin += num;
+  updateDots();
+  if (currentPin.length === 4) {
+    setTimeout(checkPin, 150);
+  }
+}
+
+function deleteKey() {
+  currentPin = currentPin.slice(0, -1);
+  updateDots();
+}
+
+function updateDots() {
+  const dots = document.querySelectorAll(".dot");
+  dots.forEach((dot, i) => {
+    dot.classList.toggle("filled", i < currentPin.length);
+  });
+}
+
+function checkPin() {
+  if (currentPin === CORRECT_PIN) {
+    document.getElementById("pin").style.display = "none";
+    document.getElementById("home").style.display = "block";
+
+    // 解锁 5 秒后弹出消息
+    setTimeout(() => {
+      const noti = document.getElementById("notification");
+      noti.style.display = "block";
+      // 5 秒后自动消失
+      setTimeout(() => {
+        noti.style.display = "none";
+      }, 5000);
+    }, 5000);
+  } else {
+    const dots = document.getElementById("dots");
+    dots.classList.add("shake");
+    setTimeout(() => {
+      dots.classList.remove("shake");
+      currentPin = "";
+      updateDots();
+    }, 400);
+  }
+}
+
+function cancelPin() {
+  document.getElementById("pin").style.display = "none";
+  document.getElementById("lock").style.display = "flex";
+  currentPin = "";
+}
+
+function openApp(name) {
+  document.getElementById("home").style.display = "none";
+  document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+  document.getElementById(name).style.display = "flex";
+  if (name === "chat") renderChat();
+  if (name === "notes") renderNotes();
+}
+
+function goHome() {
+  document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+  document.getElementById("home").style.display = "block";
+}
+
+function renderChat() {
+  const box = document.getElementById("chatContent");
+  box.innerHTML = chatData.map(m => {
+    if (m.type === "date") return `<div class="date-sep">${m.text}</div>`;
+    return `<div class="msg ${m.type}"><div class="bubble">${m.text}</div></div>`;
+  }).join("");
+  box.scrollTop = box.scrollHeight;
+}
+
+function renderNotes() {
+  const box = document.getElementById("notesContent");
+  box.innerHTML = notesData.map(n => `
+    <div class="note"><h3>${n.title}</h3><p style="white-space:pre-wrap">${n.content}</p></div>
+  `).join("");
+}
+</script>
+</body>
+</html>
