@@ -198,9 +198,9 @@ body {
           <div class="icon" style="background:#ff2d55">🖼️</div>
           <span>Photo</span>
         </div>
-        <div class="app">
-          <div class="icon" style="background:#5ac8fa">📅</div>
-          <span>Calendar</span>
+        <div class="app" onclick="openApp('music')">
+          <div class="icon" style="background:#ff2d55">🎵</div>
+          <span>Music</span>
         </div>
       </div>
       <div class="dock">
@@ -275,6 +275,19 @@ body {
       </div>
       <div class="content" id="photoViewContent" style="display:flex;align-items:center;justify-content:center;background:#000;padding:0;"></div>
     </div>
+
+    <!-- 音乐页 -->
+    <div class="page" id="music">
+      <div class="page-header">
+        <span class="back" onclick="goHome()">‹</span>
+        <span>Music</span>
+      </div>
+      <div class="content" id="musicContent" style="padding:0;"></div>
+      <div style="padding:12px 16px 20px;border-top:1px solid #eee;background:#fff;">
+        <div id="nowPlaying" style="font-weight:600;font-size:15px;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not Playing</div>
+        <audio id="audioPlayer" style="width:100%;" controls></audio>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -305,13 +318,26 @@ const photosData = [
 ];
 
 const videosData = [
-  "Video 1.mp4",
-  "Video 2.mp4",
-  "Video 3.mp4",
-  "Video 4.mp4",
-  "Video 5.mp4",
-  "Video 6.mp4",
-  "Video 7.mp4",
+  "video 1.mp4",
+  "video 2.mp4",
+  "video 3.mp4",
+  "video 4.mp4",
+  "video 5.mp4",
+  "video 6.mp4",
+  "video 7.mp4",
+];
+
+// ========== 音乐 ==========
+const songs = [
+  { title: "DtMF", artist: "Bad Bunny", src: "song1.mp3" },
+  { title: "Juno", artist: "Sabrina Carpenter", src: "song2.mp3" },
+  { title: "Levitating", artist: "Dua Lipa", src: "song3.mp3" },
+  { title: "Love In The Dark", artist: "Adele", src: "song33.mp3" },
+  { title: "石徑", artist: "Keeva Mak & Hins Cheung", src: "song4.mp3" },
+  { title: "還記得", artist: "Pakho Chau", src: "song5.mp3" },
+  { title: "續集", artist: "Joey Yung", src: "song6.mp3" },
+  { title: "我不難過 (I Am Fine)", artist: "Yanzi Sun", src: "song7.mp3" },
+  { title: "心酸 (Heartbreak)", artist: "Yoga Lin", src: "song8.mp3" },
 ];
 
 let currentPhotoTab = "photos";
@@ -336,23 +362,23 @@ let chats = JSON.parse(sessionStorage.getItem("chats")) || {
     { type: "me", text: "Two days." },
     { type: "me", text: "Please... Mase needs me." },
     { type: "them", text: "🙄Can't imagine that I'm gonna admit my key player to look after a Man United Player." },
-    { type: "me", text: "🥺" },
+    { type: "me", text: "🙁" },
   ],
   "Mom": [
     { type: "date", text: "October 18" },
     { type: "them", text: "Gonna visit Manchester from London lol?" },
     { type: "me", text: "Yes Mom..." },
     { type: "them", text: "I've made chocolate cookies. Bring some to Mase?" },
-    { type: "me", text: "Sure!! Mase will definitely be excited for that 😂" },
+    { type: "me", text: "OK. Mase will definitely excited for that 😂" },
   ],
   "WE GUNNERS ARE UNBEATABLE": [
     { type: "date", text: "October 19" },
     { type: "them", sender: "Ben", text: "uh oh our declan is setting off to Manchetser." },
     { type: "them", sender: "Martin", text: "shut the fuck up Benjamin William White." },
     { type: "them", sender: "Kai", text: "uh oh poor Benjamin." },
-    { type: "them", sender: "Ben", text: "Martin🥺." },
+    { type: "them", sender: "Ben", text: "Martin🙁." },
     { type: "me", text: "You deserve that, Benjamin. ANOTHER SIDE OF CAPTAIN." },
-    { type: "them", sender: "Ben", text: "shut the fuck up declan rice. get your dick to Manchester asap🙂" },
+    { type: "them", sender: "Ben", text: "shut the fuck up declan. get your dick to Manchester asap🙂" },
   ]
 };
 
@@ -447,6 +473,7 @@ function openApp(name) {
   if (name === "chat") renderChat();
   if (name === "notes") renderNotes();
   if (name === "photos") renderPhotos();
+  if (name === "music") renderMusic();
 }
 
 function goHome() {
@@ -618,6 +645,28 @@ function viewMedia(src, type) {
     document.getElementById("photoViewTitle").textContent = "Photo";
   }
   openApp("photoView");
+}
+
+// ========== 音乐功能 ==========
+function renderMusic() {
+  const box = document.getElementById("musicContent");
+  box.innerHTML = songs.map((s, i) => `
+    <div onclick="playSong(${i})" style="padding:16px;border-bottom:1px solid #eee;cursor:pointer;display:flex;align-items:center;gap:12px;">
+      <div style="width:48px;height:48px;border-radius:8px;background:#ff2d55;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex-shrink:0;">🎵</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:600;font-size:16px;">${s.title}</div>
+        <div style="font-size:14px;color:#666;margin-top:2px;">${s.artist}</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function playSong(i) {
+  const song = songs[i];
+  const player = document.getElementById("audioPlayer");
+  player.src = song.src;
+  player.play();
+  document.getElementById("nowPlaying").textContent = song.title + " - " + song.artist;
 }
 </script>
 </body>
