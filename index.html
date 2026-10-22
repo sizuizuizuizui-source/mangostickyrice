@@ -284,10 +284,11 @@ body {
       </div>
       <div class="content" id="musicContent" style="padding:0;"></div>
       <div style="padding:12px 16px 20px;border-top:1px solid #eee;background:#fff;">
-        <div id="nowPlaying" style="font-weight:600;font-size:15px;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not Playing</div>
-        <audio id="audioPlayer" style="width:100%;" controls></audio>
-      </div>
-    </div>
+  <div id="nowPlaying" style="font-weight:600;font-size:15px;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not Playing</div>
+  <audio id="audioPlayer" style="width:100%;" controls></audio>
+  <div style="display:flex;justify-content:center;gap:24px;margin-top:10px;">
+    <div onclick="prevSong()" style="width:40px;height:40px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;">⏮</div>
+    <div onclick="nextSong()" style="width:40px;height:40px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;">⏭</div>
   </div>
 </div>
 
@@ -318,13 +319,13 @@ const photosData = [
 ];
 
 const videosData = [
-  "video 1.mp4",
-  "video 2.mp4",
-  "video 3.mp4",
-  "video 4.mp4",
-  "video 5.mp4",
-  "video 6.mp4",
-  "video 7.mp4",
+  "video1.mp4",
+  "video2.mp4",
+  "video3.mp4",
+  "video4.mp4",
+  "video5.mp4",
+  "video6.mp4",
+  "video7.mp4",
 ];
 
 // ========== 音乐 ==========
@@ -338,6 +339,8 @@ const songs = [
   { title: "續集", artist: "Joey Yung", src: "song6.mp3" },
   { title: "我不難過 (I Am Fine)", artist: "Yanzi Sun", src: "song7.mp3" },
   { title: "心酸 (Heartbreak)", artist: "Yoga Lin", src: "song8.mp3" },
+  { title: "孤雛 ", artist: "AGA", src: "song9.mp3" },
+  { title: "戀無可戀", artist: "Leo Ku", src: "song10.mp3" },
 ];
 
 let currentPhotoTab = "photos";
@@ -648,6 +651,18 @@ function viewMedia(src, type) {
 }
 
 // ========== 音乐功能 ==========
+let currentSongIndex = -1;
+
+function prevSong() {
+  if (currentSongIndex <= 0) return;
+  playSong(currentSongIndex - 1);
+}
+
+function nextSong() {
+  if (currentSongIndex >= songs.length - 1) return;
+  playSong(currentSongIndex + 1);
+}
+
 function renderMusic() {
   const box = document.getElementById("musicContent");
   box.innerHTML = songs.map((s, i) => `
@@ -662,12 +677,20 @@ function renderMusic() {
 }
 
 function playSong(i) {
+  currentSongIndex = i;
   const song = songs[i];
   const player = document.getElementById("audioPlayer");
   player.src = song.src;
   player.play();
   document.getElementById("nowPlaying").textContent = song.title + " - " + song.artist;
 }
+
+// 播放完自动下一首
+document.getElementById("audioPlayer").addEventListener("ended", function() {
+  if (currentSongIndex < songs.length - 1) {
+    nextSong();
+  }
+});
 </script>
 </body>
 </html>
